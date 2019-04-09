@@ -1,0 +1,36 @@
+function groupName()
+{
+debugger;
+
+  var result = "false";
+  $.ajax({
+    url: _spPageContextInfo.webAbsoluteUrl +'/_api/web/currentuser/groups',
+    type: "GET",
+    async: false,
+    headers: {
+        "Accept": "application/json;odata=verbose",       
+    },
+    success: function(data){
+    var groups = data.d.results
+    
+    var Arr = ['developer','Client India','Developers India'];
+    Arr.forEach(function( j,element){
+   console.log(element);   
+            
+        for(i=0; i<groups.length; i++) {         
+            if (groups[i].LoginName == j)
+             {               
+              $('nobr:contains("EmpFirstName")').closest('tr').hide();
+	          $('nobr:contains("EmplastName")').closest('tr').hide();
+	          $('nobr:contains("availability")').closest('tr').hide();
+	      		break;
+             } 
+           
+        };
+        });
+       
+    },
+   
+  })
+  }
+
