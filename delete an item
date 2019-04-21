@@ -1,0 +1,82 @@
+ function deleteItem()
+{
+  debugger;
+   var ID,
+    EMID,
+    EmpFirstName,
+    EmplastName,
+    Gender,
+    DateOfBirth,
+    EmailAddress,
+    MoblieNumber,
+    Address,
+    City,
+    PinCode,
+  selectState,
+    Country,
+     
+
+   ID=$("#itemid").val();
+     EMPID=$("#empid").val();
+    EmpFirstName=$("#firstname").val();
+    EmplastName=$("#lastname").val();
+    Gender=$("input[name='gender']:checked").val();
+    DateOfBirth=$("#birthday").val();
+    EmailAddress=$("#email").val();
+    MoblieNumber=$("#number2").val();
+    Address=$("#address").val();
+    City=$("#select").val(); 
+    PinCode=$("#number1").val();
+   selectState = $("#selectt").val();
+    Country = $("#country").val();
+
+    var url= _spPageContextInfo.webAbsoluteUrl + "/_api/web/lists/getbytitle('testRest')/items("+  ID +")";
+var data = JSON.stringify(
+      {
+        "__metadata":
+        {
+            "type": "SP.Data.TestRestListItem"
+        },
+          // "Title": EMPID,
+        //"EmpFirstName": EmpFirstName,
+        //"EmplastName":EmplastName,
+       //"Gender":Gender,
+       // "DateOfBirth": DateOfBirth,
+       //"EmailAddress": EmailAddress,
+      // "MoblieNumber": MoblieNumber,
+        // "City": City,
+        //"PinCode":PinCode, 
+     //"selectState": selectState,
+      //"Country":  Country
+    })
+    $.ajax
+    ({
+        url: url,
+        type: "POST",
+        data: data,
+        headers: {
+            "Accept": "application/json;odata=verbose",
+            "Content-Type": "application/json;odata=verbose",
+            "X-RequestDigest": $("#__REQUESTDIGEST").val(),
+             "IF-MATCH": "*",  
+            "X-HTTP-Method": "DELETE"  
+
+        },
+        success: function(data)
+      {
+            alert("item deleted successfully.");
+            console.log(data);
+        },
+        error: function(data)
+        {
+            alert(data.responseText);
+ console.log(data);
+        }
+    });
+
+
+}
+
+
+
+
