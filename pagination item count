@@ -1,0 +1,103 @@
+<html>
+<head>
+<span style="font-size: 10pt;"><link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css" />
+<script src="https://code.jquery.com/jquery-1.12.4.js" type="text/javascript"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script></span></head>
+<body>
+<table id="table_id" class="display" role="grid" width="100%" cellspacing="0">  
+        <thead> 
+<tr> 
+             <th>ID</th>  
+                <th>Name</th>  
+                <th>Position</th>  
+                <th>City</th>  
+  </tr>
+        </thead> 
+</table>
+<script type= text/javascript>
+var TotalItemCount=0;
+$(document).ready(function () { //UPDATED CODE START
+ Remove datatable warnings on loading
+ $.fn.dataTable.ext.errMode = 'none';
+    var siteurl = _spPageContextInfo.webAbsoluteUrl;
+    var ItemCount= GetItemCount(siteurl, 'SiteTile');
+    createRestUrl(siteurl,ItemCount,'SiteTile');
+});  //UPDATED CODE END
+//Step 1. get total item count of threshold exceed list.
+function GetItemCount(siteurl){
+     var ItemCount='';
+     $.ajax({
+           url: siteurl+"/_api/web/lists/GetByTitle('STAFFEMP')/ItemCount", 
+           method: "GET",
+           async: false,
+           headers: { "Accept": "application/json; odata=verbose" },
+           success: function (data) {
+               ItemCount = data.d.ItemCount;
+           },
+            error: function (data) {
+               console.log(data);
+            }
+     });
+     return ItemCount;   
+}
+//Step 2. create rest service url if item count is above 5000 then we split calling with 1000 item per call top=1000 for better performance. Otherwise we call as usual 5000 items top=5000
+function createRestUrl(siteurl, ItemCount) {
+ 
+        if(ItemCount<=5000) {
+		//Item count less than 5000 so we limit it as usual 5000
+        	var listServiceUrl = siteurl+ "/_api/web/lists/GetByTitle('STAFFEMP')/Items?$select=ID,Name,Position,City&$top=5000";
+	} else {
+		//Item count more than 5000 so we split it in 1000 item per call
+		var listServiceUrl = siteurl+ "/_api/web/lists/GetByTitle('STAFFEMP')/Items?$select=ID,Name,Position,City&$top=1000";
+        }
+        
+	//Step 3: Rest call to procerss each items of list
+       	$.when(processList(listServiceUrl,ItemCount)).done(function () { });
+}
+function processList(nextUrl,ItemCount) {
+   		
+        var dfd = new $.Deferred();
+        
+        if (nextUrl == undefined) {
+            dfd.resolve();
+            return;
+        }
+		 
+        //Step 4: Repetative call to getJSONDataFromUrl() to get Ajax Json object.
+        getJSONDataFromUrl(nextUrl).done(function (listItems) {
+        
+        	TotalItemCount = TotalItemCount+listItems.d.results.length;
+        	
+           	var items = listItems.d.results;
+                var next = listItems.d.__next;
+			
+                $.when(processList(next,ItemCount)).done(function (){
+            	
+                   dfd.resolve();
+               
+                });
+                         var tableHTML='';
+            //Create datatable object
+            var table = $('#table_id').DataTable();     
+             $.each(items, function(index, obj){
+			tableHTML +='<tr><td>'+obj.ID+'</td><td>'+obj.Name+'</td><td>'+obj.Position+'</td><td>'+obj.City+'</td></tr>';
+             }); 
+             table.rows.add($(tableHTML)).draw(); //Append each list row to data tabel
+            
+      });
+      return dfd.promise();
+}
+//Step 4: Repetative call to getJSONDataFromUrl() to get Ajax Json object.
+function getJSONDataFromUrl(endpoint) {
+        return jQuery.ajax({
+            url: endpoint,
+            method: "GET",
+            headers: {
+                "Accept": "application/json; odata=verbose",
+                "Content-Type": "application/json; odata=verbose"
+            }
+        });
+}
+</script>
+</body>
+</html>
