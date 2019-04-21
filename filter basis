@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
+
+    <title>Hello, world!</title>
+  </head>
+  <body>
+      <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group mx-sm-3">
+                           
+                        </div>
+                        ID:<input type="text" id="txtid">
+                        Name:<input type="text" id="txtname">
+                        
+                    
+                        <button id="btnsearch" type="button" class="btn btn-primary">search</button>
+                    </div>
+                </div>
+                
+             <table id="tblEmployee" class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Title</th>
+                             <th>EmployeeName</th>
+                            <th>CompleteAddress</th>
+                            <th>Gender</th>
+                            <th>Salary</th>
+                            <th>DateofBirth</th>
+                           <th>IsActive</th>
+                            <th>Department</th>
+                            <th>Manager</th>
+                            <th>Photo</th>
+                          </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>  
+        </div>
+      </div>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"></script>
+      <script type="text/javascript">
+       
+        var itemId = "";
+       // var itemName="";  
+        $(document).ready(function(){
+            //$("#btnsearch").click(function(){
+              //  $('#tblEmployee tbody').empty();
+              //  itemId = $('#txtid').val();
+               // itemName=$('txtname').val();
+                GetFilteredItem();
+           // });
+        });
+                          
+     
+        
+          
+            function GetFilteredItem(){
+            debugger;
+            $.ajax({
+                url:_spPageContextInfo.webAbsoluteUrl + "/_api/lists/getbytitle('Stuff%20detail')/items?$select=ID,Title,EmployeeName,CompleteAddress,Gender,Salary,DateofBirth,IsActive,Department/Title,Department/ID,Manager/Title,Manager/ID,Manager/EMail,Photo&$expand=Department,Manager",
+                 
+             method: "GET",
+                 headers:
+              {"Accept":"application/json;odata=verbose"},
+                success:function(data){
+                     var result = data.d.results;
+                    console.log(result);
+                    var tr = "";
+                    if(result.length >0){
+                        $.each(result, function(index, value){
+                            tr += '<tr><td>' + value.ID + '</td><td>' + value.Title + '</td><td>' + value.EmployeeName + '</td><td>' + value.CompleteAddress + '</td><td>'+ value.Gender + '</td><td>' + value.Salary + '</td><td>' + value.DateofBirth + '</td><td>' + value.IsActive + '</td><td>' + value.Department.Title + '</td><td>' + value.Manager.Title + '</td><td>' + value.Photo.Url + '</td></tr>';
+                            
+                        });
+                    }
+                    else{
+                        tr += '<tr><td colspan="4">There is no found related to search</td></td>';
+                    }
+                   console.log(tr);
+                    $('#tblEmployee tbody').append(tr);
+                },
+                       error: function(data){
+                    alert(data.responseText);
+                }
+            });
+            }
+                   
+                   
+                   
+                                          
+      </script>
