@@ -1,0 +1,54 @@
+function displayItem()
+{
+  debugger;
+  
+  
+    var EmpId;
+    EmpId = $("#empid").val()
+    var ID="";  
+   
+    var Ownurl = _spPageContextInfo.webAbsoluteUrl + "/_api/web/lists/getbytitle('testRest')/items?$filter=Title eq '"+ EmpId +"'";  
+    $.ajax({  
+ 
+        url: Ownurl,  
+        headers: { Accept: "application/json;odata=verbose" },  
+        async:false,  
+        success: function (data) {  
+            var items = data.d.results;  
+            if (items.length > 0)
+            {  
+                ID=$("#itemid").val(items[0].ID);
+               $('#firstname').val(items[0].EmpFirstName);
+               $('#lastname').val(items[0].EmplastName);
+               $('input:radio[name="Gender"]').filter('[value="' + items[0].Gender + '"]').prop('checked', true);
+             var edate=$('#birthday').val(items[0].DateOfBirth.split('T')[0]);
+           //var edate=$('#birthday').val(items[0].DateOfBirth); 
+            alert(edate);
+        // var date = '2019-03-12T18:30:00Z';
+             //alert(date);
+                //console.log(date);
+ //var Ndate = moment(date).format('DD-MMM-YYYY')
+   // alert(Ndate);
+
+             // var date = new Date('2019-03-12T18:30:00Z');
+         // $('#birthday').val(items[0].DateOfBirth)
+  //day = date.getDate();
+  //month = date.getMonth() + 1;
+  //year = date.getFullYear();
+//alert([day, month, year].join('-')); 
+   
+               $('#email').val(items[0].EmailAddress);
+               $('#number2').val(items[0].MoblieNumber); 
+               $('#select').val(items[0].City); 
+                 $('#number1').val(items[0].PinCode);
+                  $('#selectt').val(items[0].selectState);
+                  $('#country').val(items[0].Country);     
+                   } 
+                   console.log(items);   
+        },
+        eror: function (data) {  
+        alert(data.responseText);
+}  
+    });  
+    
+}
