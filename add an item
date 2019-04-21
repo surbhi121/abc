@@ -1,0 +1,75 @@
+function addnewItem()
+{
+    debugger;
+
+    var EMID,
+    EmpFirstName,
+    EmplastName,
+    Gender,
+    DateOfBirth,
+    EmailAddress,
+    MoblieNumber,
+    Address,
+    City,
+    PinCode,
+  selectState,
+    Country,
+citylookup,
+
+    EMPID=$("#empid").val();
+    EmpFirstName=$("#firstname").val();
+    EmplastName=$("#lastname").val();
+    Gender=$("input[name='Gender']:checked").val();
+    DateOfBirth=$("#birthday").val();
+    EmailAddress=$("#email").val();
+    MoblieNumber=$("#number2").val();
+    Address=$("#address").val();
+    City=$("#select").val(); 
+    PinCode=$("#number1").val();
+   selectState = $("#selectt").val();
+    Country = $("#country").val();
+
+    var url = _spPageContextInfo.siteAbsoluteUrl + "/_api/web/lists/getbytitle('countryStateCity')/items";
+    var data = JSON.stringify(
+      {
+        "__metadata":
+        {
+            "type": "SP.Data.TestRestListItem"
+        },
+        "Title": EMPID,
+        "EmpFirstName": EmpFirstName,
+        "EmplastName":EmplastName,
+        "Gender":Gender,
+        "DateOfBirth": DateOfBirth,
+        "EmailAddress": EmailAddress,
+        "MoblieNumber": MoblieNumber,
+         "City": City,
+        "PinCode":PinCode, 
+      "selectState": selectState,
+        "Country":  Country,
+        "citylookup": $('#drpcountries option:selected').val(),
+  
+    })
+      
+   $.ajax
+    ({
+        url: url,
+        type: "POST",
+        data: data,
+        headers: {
+            "Accept": "application/json;odata=verbose",
+            "Content-Type": "application/json;odata=verbose",
+            "X-RequestDigest": $("#__REQUESTDIGEST").val()
+        },
+        success: function(data)
+      {
+            alert("New list item has been created successfully.");
+            console.log(data);
+        },
+        error: function(data)
+        {
+            alert(data.responseText);
+ console.log(data);
+        }
+    });
+}
