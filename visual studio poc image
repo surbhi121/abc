@@ -1,0 +1,73 @@
+<html>
+
+<body>
+<div id="ab">
+</div>
+<div id="kk">
+</div>
+
+ <script src="https://loctechinfos.sharepoint.com/sites/welcome/SiteAssets/restcode/jquery-1.12.4.js"></script>
+     <script type="text/javascript">
+$(document).ready(function(){
+  
+      GetItem();
+         $('#ab').empty();
+  
+});
+
+
+
+ 
+function GetItem()
+{
+    debugger;
+    $.ajax({                                                                                           
+         url:_spPageContextInfo.webAbsoluteUrl +"/_api/web/lists/getbytitle('product2')/items?$select=ProductName,Image",
+         method:"GET",
+         headers:
+         {"Accept":"application/json;odata=verbose"},
+         success:function(data){
+             var result = data.d.results;
+             var url=data.d.results[0].Image;
+             console.log(result);
+           var div=[""];
+             if(result.length>0){
+               
+                 
+                 $.each(result,function(index,value){
+    //  div+='<div>'+ value.ProductName +'</div><div><a href="https://loctechinfos.sharepoint.com/sites/welcome/SitePages/formdata.aspx"><img src="https://loctechinfos.sharepoint.com/sites/welcome/SiteAssets/image/audi.jpg" height="25" width="80" /></a></div>'
+    
+              div+='<div><img src ="+url+"/></div>'
+               // <a href="www.goggle.com"><image border='none' src='" + value.Image + "'></Image></a>" + "</br>"
+
+
+                console.log(data.d.results.FileRef);
+
+       
+
+ });
+     }
+     
+                  else{
+                        div += '<div>There is no found related to search</div>';
+                    }
+                  
+                      console.log(div);
+                   $('#ab').append(div);
+                 },
+
+          error: function(data){
+                    alert(data.responseText);
+                 
+         }
+
+    });
+ 
+
+
+
+   
+} 
+</script>
+</body>
+</html>
